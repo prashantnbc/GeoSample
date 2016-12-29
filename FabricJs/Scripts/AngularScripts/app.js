@@ -3,7 +3,8 @@
 var app = angular.module('PrashProject', [])
     .controller('MainCtrl', ['$scope', function ($scope) {
         $scope.lstData = [
-            { "type": "quartercircle", "r": 90, "angle": 90, "color": "blue", "top": 10, "left": 20 },
+            //{ "type": "quartercircle", "r": 90, "angle": 90, "color": "blue", "top": 10, "left": 20 },
+            { "type": "ratioCircle", "text": "x", "angle": 45, "textangle": "α", "r": 100, "color": "green", "top": 5, "left": 10 },
             { "type": "rightTriangle", "h": 6, "w": 5.2, "color": "rgb(154, 154, 239)", "textH": "6", "textW": "A=?", "textC": "8", "angleTop": "a", "angleLBot": "b", "bottomText": "", "ptA": "A", "ptB": "B", "ptC": "C", "top": 5, "left": 10, "align": "left" },
             { "type": "rightTriangle", "h": 6, "w": 5.2, "color": "rgb(154, 154, 239)", "textH": "6", "textW": "A=?", "textC": "8", "angleTop": "a", "angleLBot": "b", "bottomText": "", "ptA": "A", "ptB": "B", "ptC": "C", "top": 5, "left": 10, "align": "right" },
 
@@ -238,6 +239,31 @@ var app = angular.module('PrashProject', [])
                     case 'circle':
                         canvasa.add(draw.DrawCircle({
                             radius: data[i].radius,
+                            fill: data[i].color,
+                            top: data[i].top,
+                            left: data[i].left,
+                            showDimensions: true
+                        }));
+                        break;
+                    case 'ratioCircle':
+                        canvasa.add(draw.DrawRatioCircle({
+                            r: data[i].r,
+                            angle: data[i].angle,
+                            text: data[i].text,
+                            textangle: data[i].textangle,
+                            fill: data[i].color,
+                            top: data[i].top,
+                            left: data[i].left,
+                            showDimensions: true
+                        }));
+                        break;
+                    case 'radiansArcLength':
+                        canvasa.add(draw.DrawRadiansArcLength({
+                            r: data[i].r,
+                            angle: data[i].angle,
+                            text: data[i].text,
+                            arc: data[i].arc,
+                            shade: data[i].shade,
                             fill: data[i].color,
                             top: data[i].top,
                             left: data[i].left,

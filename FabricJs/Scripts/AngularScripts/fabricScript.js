@@ -884,6 +884,60 @@ var Draw = function () {
         }
     };
     /*-------------------------------------------------------------------------------------------*/
+    this.DrawRatioCircle = function (args) {
+        var circle = new fabric.Circle({
+            stroke: args.fill,
+            fill: '',
+            radius: args.r
+        });
+
+        var rL = writeLine(-20, args.r, 2 * args.r + 20, args.r);
+        var rA1 = writeArrow(-20, args.r + 3, -90);
+        var rA2 = writeArrow(2 * args.r + 20, args.r - 2, 90);
+
+        var rowLine = new fabric.Group([rL, rA1, rA2], {
+            angle: 0
+        });
+
+        var cL = writeLine(args.r, -20, args.r, 2 * args.r + 20);
+        var cA1 = writeArrow(args.r - 2, -20, 0);
+        var cA2 = writeArrow(args.r + 3, 2 * args.r + 20, 180);
+
+        var colLine = new fabric.Group([cL, cA1, cA2], {
+            angle: 0
+        });
+        //
+        var alpha = args.angle * Math.PI / 180;
+        var height = -Math.sin(alpha) * args.r;
+        var width = Math.cos(alpha) * args.r;
+        //
+        var hypotenuse = writeLine(args.r, args.r, width + args.r, height + args.r);
+        var sideox = writeLine(args.r, args.r, width + args.r, args.r);
+        var sideoy = writeLine(width + args.r, height + args.r, width + args.r, args.r);
+        //
+        var upline = writeLine(width + args.r - 15, args.r, width + args.r - 15, args.r - 15);
+        var downline = writeLine(width + args.r - 15, args.r - 15, width + args.r, args.r - 15);
+
+        var rightangle = new fabric.Group([upline, downline], {
+            angle: 0
+        });
+        //
+        var st = (360 - args.angle) * Math.PI / 180;
+        var end = 2 * Math.PI;
+        var alphadr = writeAngleCircle(args.angle, 0, st, end, args.r - 15, args.r - 15, args.fill, args);
+        //
+        var alphatext = writeText(args.textangle, args.r + 20, args.r - 20, 'x');
+        var triangleGroup = new fabric.Group([hypotenuse, sideox, sideoy, rightangle, alphadr, alphatext], {
+            angle: 0
+        });
+        var textoutcircle = writeText(args.text, args.r * 2 + 10, args.r / 2, 'x');
+        var group = new fabric.Group([circle, rowLine, colLine, triangleGroup, textoutcircle], {
+            left: args.left,
+            top: args.top
+        });
+        return group;
+    };
+    /*-------------------------------------------------------------------------------------------*/
     this.DrawSemiCircleWihCircumference = function (args) {
         args.fontSize = args.fontSize || 14;
         var rRadius = args.radius;
@@ -925,8 +979,8 @@ var Draw = function () {
             rx: args.rx,
             ry: args.ry
         });
-        var rx = writeText(rx, args.rx, args.rx, 'x');
-        var ry = writeText(rY, args.rx * 2, args.rx / 2 + args.fontSize / 2, 'x');
+        var rx = writeText(rX, args.rx, args.rx, 'x');
+        var ry = writeText(rY, args.rx * 2 + 10, args.rx / 2 + args.fontSize / 2 - 10, 'x');
 
         var group = new fabric.Group([ellipse, rx, ry], {
             left: args.left,
@@ -935,6 +989,196 @@ var Draw = function () {
         });
         return group;
     };
+    /*-------------------------------------------------------------------------------------------*/
+    this.DrawRadiansArcLength = function (args) {
+
+        var angle = args.angle * Math.PI / 180; console.log();
+        var circle = new fabric.Circle({
+            stroke: args.fill,
+            fill: '',
+            radius: args.r
+        });
+        if (args.shade !== true) {
+            var firstline = new fabric.Line([args.r, args.r, 2 * args.r, args.r], {
+                fill: '',
+                strokeWidth: 2,
+                stroke: 'green'
+            });
+            var height = -Math.sin(angle) * args.r + args.r;
+            var width = Math.cos(angle) * args.r + args.r;
+            var endline = new fabric.Line([args.r, args.r, width, height], {
+                fill: '',
+                strokeWidth: 2,
+                stroke: 'green'
+            });
+            if (args.angle === 90) {
+                var tLineTopL = new fabric.Line([args.r + 15, args.r - 15, args.r + 15, args.r], {
+                    fill: '',
+                    strokeWidth: 2,
+                    stroke: 'black'
+                });
+                var tLineTopR = new fabric.Line([args.r, args.r - 15, args.r + 15, args.r - 15], {
+                    fill: '',
+                    strokeWidth: 2,
+                    stroke: 'black'
+                });
+                var adangle = new fabric.Circle({
+                    radius: args.r,
+                    angle: 0,
+                    strokeWidth: 2,
+                    startAngle: 270 / 180 * Math.PI,
+                    endAngle: 360 / 180 * Math.PI,
+                    stroke: 'green',
+                    left: 0,
+                    fill: '',
+                    top: 0,
+                });
+                var textradius = writeText(args.r, args.r + args.r / 2, args.r + 5, 'x');
+                var textang = writeText(args.text, args.r + 30, args.r - 30, 'x');
+                var textangle = new fabric.Group([tLineTopR, tLineTopL, adangle, textradius, textang], {
+                    angle: 0
+                });
+            } else {
+                var anglecir = new fabric.Circle({
+                    radius: 15,
+                    angle: 0,
+                    strokeWidth: 2,
+                    startAngle: (360 - args.angle) / 180 * Math.PI,
+                    endAngle: 360 / 180 * Math.PI,
+                    stroke: 'black',
+                    left: args.r - 15,
+                    fill: '',
+                    top: args.r - 15
+                });
+                var adangle = new fabric.Circle({
+                    radius: args.r,
+                    angle: 0,
+                    strokeWidth: 2,
+                    startAngle: (360 - args.angle) / 180 * Math.PI,
+                    endAngle: 360 / 180 * Math.PI,
+                    stroke: 'green',
+                    left: 0,
+                    fill: '',
+                    top: 0
+                });
+                var textradius = writeText(args.r, args.r + args.r / 2, args.r + 5, 'x');
+                var textang = writeText(args.text, args.r + 30, args.r - 30, 'x');
+                var textangle = new fabric.Group([adangle, textradius, textang, anglecir], {
+                    angle: 0
+                });
+            }
+
+            var group = new fabric.Group([circle, firstline, endline, textangle], {
+                left: args.left,
+                top: args.top
+            });
+        } else {
+            var firstline = new fabric.Line([args.r, args.r, 2 * args.r, args.r], {
+                fill: '',
+                strokeWidth: 2,
+                stroke: 'green'
+            });
+            var height = -Math.sin(angle) * args.r + args.r;
+            var width = Math.cos(angle) * args.r + args.r;
+            var endline = new fabric.Line([args.r, args.r, width, height], {
+                fill: '',
+                strokeWidth: 2,
+                stroke: 'green'
+            });
+            if (args.angle === 90) {
+                var tLineTopL = new fabric.Line([args.r + 15, args.r - 15, args.r + 15, args.r], {
+                    fill: '',
+                    strokeWidth: 2,
+                    stroke: 'black'
+                });
+                var tLineTopR = new fabric.Line([args.r, args.r - 15, args.r + 15, args.r - 15], {
+                    fill: '',
+                    strokeWidth: 2,
+                    stroke: 'black'
+                });
+                var textangle = new fabric.Group([tLineTopR, tLineTopL], {
+                    angle: 0
+                });
+            } else {
+                var anglecir = new fabric.Circle({
+                    radius: 15,
+                    angle: 0,
+                    strokeWidth: 2,
+                    startAngle: (360 - args.angle) / 180 * Math.PI,
+                    endAngle: 360 / 180 * Math.PI,
+                    stroke: 'black',
+                    left: args.r - 15,
+                    fill: '',
+                    top: args.r - 15
+                });
+                var textangle = new fabric.Group([anglecir], {
+                    angle: 0
+                });
+            }
+
+            var adangle = new fabric.Circle({
+                radius: args.r,
+                angle: 0,
+                strokeWidth: 2,
+                startAngle: (360 - args.angle) / 180 * Math.PI,
+                endAngle: 360 / 180 * Math.PI,
+                stroke: 'green',
+                left: 0,
+                fill: '',
+                top: 0
+            });
+
+            var arc = new fabric.Circle({
+                radius: args.r + 10,
+                angle: 0,
+                strokeWidth: 2,
+                startAngle: (360 - args.angle) / 180 * Math.PI,
+                endAngle: 360 / 180 * Math.PI,
+                stroke: 'green',
+                left: -10,
+                fill: '',
+                top: -10
+            });
+            var arcadditionlinest = new fabric.Line([2 * args.r + 5, args.r, 2 * args.r + 15, args.r], {
+                fill: '',
+                strokeWidth: 2,
+                stroke: 'green'
+            });
+
+            var heightst = -Math.sin(angle) * (args.r + 5) + args.r;
+            var widthst = Math.cos(angle) * (args.r + 5) + args.r;
+
+            var heightend = -Math.sin(angle) * (args.r + 15) + args.r;
+            var widthtend = Math.cos(angle) * (args.r + 15) + args.r;
+
+            var arcadditionlineen = new fabric.Line([widthst, heightst, widthtend, heightend], {
+                fill: '',
+                strokeWidth: 2,
+                stroke: 'green'
+            });
+            var textarc = writeText(args.arc, 2 * args.r + 15, args.r / 2 + Math.cos(angle) * 10, "x");
+            var textradius = writeText(args.r, args.r + args.r / 2, args.r + 15, 'x');
+
+            var radiusline = new fabric.Line([args.r, args.r + 5, 2 * args.r, args.r + 5], {
+                fill: '',
+                strokeWidth: 1,
+                stroke: 'green'
+            });
+
+            var radiusAddline = new fabric.Line([args.r, args.r, args.r, args.r + 10], {
+                fill: '',
+                strokeWidth: 1,
+                stroke: 'green'
+            });
+
+            var textang = writeText(args.text, args.r + 30, args.r - 30, 'x');
+            var group = new fabric.Group([circle, firstline, endline, textangle, adangle, textradius, textang, arc, textarc, arcadditionlinest, arcadditionlineen, radiusline, radiusAddline], {
+                left: args.left,
+                top: args.top
+            });
+        }
+        return group;
+    }
     /*-------------------------------------------------------------------------------------------*/
     this.DrawQuarterCircle = function (args) {
         var angle = args.angle * Math.PI / 180;
